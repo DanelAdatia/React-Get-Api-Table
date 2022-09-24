@@ -1,6 +1,7 @@
 import {
   Box,
   Card,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +22,6 @@ const Dashboard = () => {
       await GetApi().then((res) => {
         setData(res?.data);
       });
-      toast("Calling Api Every 5 seconds");
     } catch (err) {
       console.log(err);
       toast("Something went wrong");
@@ -31,50 +31,59 @@ const Dashboard = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       GetTableData();
+      toast("Calling Api Every 5 seconds");
     }, 5000);
     return () => clearInterval(timer);
   }, []);
-  return (
-    <Card>
-      <Box
-        sx={{
-          mt: 2,
-          mx: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Typography variant="h5">UI Table</Typography>
-      </Box>
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="center" spacing={2}>
-                #
-              </TableCell>
-              <TableCell align="center" spacing={2}>
-                Symbol
-              </TableCell>
-              <TableCell align="center" spacing={2}>
-                Open Price
-              </TableCell>
-              <TableCell align="center" spacing={2}>
-                Ask Price
-              </TableCell>
-              <TableCell align="center" spacing={2}>
-                Count
-              </TableCell>
-              <TableCell align="center" spacing={2} />
-              <TableCell align="center" spacing={2} />
-              <TableCell align="center" spacing={2} />
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data.length !== 0 ? (
-              data?.map((item, index) => (
+  useEffect(() => {
+    GetTableData();
+    console.log("i fire once");
+  }, []);
+  return (
+    <Card
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+      }}
+    >
+      <Box style={{ flexDirection: "column", display: "flex" }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: 4,
+          }}
+        >
+          <Typography variant="h5">UI Table</Typography>
+        </Box>
+
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center" spacing={2}>
+                  #
+                </TableCell>
+                <TableCell align="center" spacing={2}>
+                  Symbol
+                </TableCell>
+                <TableCell align="center" spacing={2}>
+                  Open Price
+                </TableCell>
+                <TableCell align="center" spacing={2}>
+                  Ask Price
+                </TableCell>
+                <TableCell align="center" spacing={2}>
+                  Count
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell align="center" spacing={2}>
                     {index}
@@ -86,23 +95,23 @@ const Dashboard = () => {
                     {item?.openPrice}
                   </TableCell>
                   <TableCell align="center" spacing={2}>
-                    {item?.askPrice}
+                    <b>{item?.askPrice}</b>
                   </TableCell>
-                  <TableCell align="center" spacing={2}>
+                  <TableCell
+                    style={
+                      index % 2 === 0 ? { color: "red" } : { color: "green" }
+                    }
+                    align="center"
+                    spacing={2}
+                  >
                     {item?.count}
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell align="center" colSpan="7">
-                  Please Wait For Five Seconds
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       <ToastContainer />
     </Card>
   );
